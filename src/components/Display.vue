@@ -1,43 +1,31 @@
 <template>
 
-  <div>
+    <v-container >
 
-    <v-container>
+        <div class="text-center" v-for="item in info" :key="item.id">
 
-      <template>
+          <iframe width="560" height="315" :src="'https://www.youtube.com/embed/' + item.link"
+                  frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          <h4>{{ item.name }}</h4>
+          <p>{{item.link}}</p>
 
-        <v-card
-            class="mx-auto my-12"
-            width="560"
-            height="315"
-        >
-          <template slot="progress">
-          </template>
+        </div>
 
-          <iframe width="560" height="315" src="https://www.youtube.com/watch?v=8dhSq9mD6TI" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      <div>
 
+        <v-form>
 
-          <v-card-title>Cafe Badilico</v-card-title>
+          <v-text-field v-model="form.name" label="Name of the song" required></v-text-field>
 
+          <v-text-field v-model="form.link" label="Link" required></v-text-field>
 
-          <v-divider class="mx-4"></v-divider>
-
-          <v-card-text>
-            <v-chip-group
-                v-model="selection"
-                active-class="deep-purple accent-4 white--text"
-                column
-            >
-              <v-chip>9:00PM</v-chip>
-            </v-chip-group>
-          </v-card-text>
-
-        </v-card>
-      </template>
+          <v-btn type="submit" @click="submitLink">SUBMIT</v-btn>
+        </v-form>
+        <p>{{form}}</p>
+      </div>
 
     </v-container>
 
-  </div>
 
 </template>
 
@@ -47,14 +35,33 @@ import axios from "axios";
 export default {
   name: "Display",
   data: () => ({
-    info: null
+    info: null,
+    form: {
+      name: '',
+      link: ''
+    }
   }),
   mounted() {
     axios
      .get('http://trakomlat/api/music')
     .then(response => (this.info = response.data))
+  },
+  methods: {
+    submitLink: function ()
+    {
+      axios
+          .post('http://trakomlat/api/music', this.form)
+      .then(function (response) {
+        console.log(response)
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
+
+    }
+    }
   }
-}
+
 </script>
 
 <style scoped>
