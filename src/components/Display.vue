@@ -1,21 +1,8 @@
 <template>
 
     <v-container>
-        <!--login form -->
-        <p>{{ users }}</p>
-        <v-row>
-            <v-col cols="2">
-                <v-form>
-                    <v-text-field v-model="login.name" label="Name" type="text"></v-text-field>
-                    <v-text-field v-model="login.password" label="Password" type="password"></v-text-field>
-                    <v-btn type="submit" @click="login">LOGIN</v-btn>
-                    <br>
-                    <br>
-                </v-form>
-            </v-col>
-        </v-row>
 
-        <div v-if="isLoggedIn">
+        <div >
             <p>{{ info }}</p>
             <!-- form that submits new link to a database-->
             <div>
@@ -64,23 +51,15 @@ export default {
             name: '',
             link: ''
         },
-        login: {
-            name: '',
-            password: ''
-        },
-        isLoggedIn: false,
     }),
     mounted() {
         axios
             .get('http://trakomlat/api/music')
             .then(response => (this.info = response.data))
 
-        axios
-            .get('http://trakomlat/api/user')
-            .then(response => (this.users = response.data));
         },
     methods: {
-        submitLink: function () {
+        submitLink: async function() {
             // eslint-disable-next-line no-unused-vars
             let firstStep = [];
             // eslint-disable-next-line no-unused-vars
@@ -93,14 +72,18 @@ export default {
             thirdStep = secondStep.split("&");
             this.form.link = thirdStep[0];
 
-            axios
-                .post('http://trakomlat/api/music', this.form)
-                .then(function (response) {
-                    console.log(response)
-                })
-                .catch(function (error) {
-                    console.log(error)
-                })
+            // eslint-disable-next-line no-unused-vars
+            let response = await axios.post('http://trakomlat/api/music', this.form);
+            return response;
+
+            // axios
+            //     .post('http://trakomlat/api/music', this.form)
+            //     .then(function (response) {
+            //         console.log(response)
+            //     })
+            //     .catch(function (error) {
+            //         console.log(error)
+            //     })
         },
 
         deleteLink: function (selectedLink) {
@@ -112,13 +95,6 @@ export default {
                 .catch(function (error) {
                     console.log(error)
                 })
-        },
-        login: function () {
-            for (let j=0; j<this.users.length; j++) {
-                if (this.login.name && this.login.password === this.users[j].name && this.users[j].password) {
-                    this.isLoggedIn = true;
-                }
-            }
         }
     }
 }
